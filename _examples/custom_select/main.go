@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/manifoldco/promptui"
+	"github.com/cloud-annotations/promptui"
 )
 
 type pepper struct {
@@ -30,7 +30,7 @@ func main() {
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}?",
 		Active:   "\U0001F336 {{ .Name | cyan }} ({{ .HeatUnit | red }})",
-		Inactive: "  {{ .Name | cyan }} ({{ .HeatUnit | red }})",
+		Inactive: "   {{ .Name | cyan }} ({{ .HeatUnit | red }})",
 		Selected: "\U0001F336 {{ .Name | red | cyan }}",
 		Details: `
 --------- Pepper ----------
