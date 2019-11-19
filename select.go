@@ -8,9 +8,9 @@ import (
 	"text/template"
 
 	"github.com/chzyer/readline"
+	"github.com/cloud-annotations/promptui/list"
+	"github.com/cloud-annotations/promptui/screenbuf"
 	"github.com/juju/ansiterm"
-	"github.com/manifoldco/promptui/list"
-	"github.com/manifoldco/promptui/screenbuf"
 )
 
 // SelectedAdd is used internally inside SelectWithAdd when the add option is selected in select mode.
@@ -176,6 +176,11 @@ type SelectTemplates struct {
 	help     *template.Template
 }
 
+type selected struct {
+	Label interface{}
+	Item  interface{}
+}
+
 // SearchPrompt is the prompt displayed in search mode.
 var SearchPrompt = "Search: "
 
@@ -301,25 +306,9 @@ func (s *Select) innerRun(cursorPos, scroll int, top rune) (int, string, error) 
 		sb.Write(label)
 
 		items, idx := s.list.Items()
-		last := len(items) - 1
 
 		for i, item := range items {
-			page := " "
-
-			switch i {
-			case 0:
-				if s.list.CanPageUp() {
-					page = "↑"
-				} else {
-					page = string(top)
-				}
-			case last:
-				if s.list.CanPageDown() {
-					page = "↓"
-				}
-			}
-
-			output := []byte(page + " ")
+			output := []byte("")
 
 			if i == idx {
 				output = append(output, render(s.Templates.active, item)...)
@@ -386,7 +375,12 @@ func (s *Select) innerRun(cursorPos, scroll int, top rune) (int, string, error) 
 		clearScreen(sb)
 	} else {
 		sb.Reset()
-		sb.Write(render(s.Templates.selected, item))
+
+		selectedItem := selected{
+			Label: s.Label,
+			Item:  item,
+		}
+		sb.Write(render(s.Templates.selected, selectedItem))
 		sb.Flush()
 	}
 
